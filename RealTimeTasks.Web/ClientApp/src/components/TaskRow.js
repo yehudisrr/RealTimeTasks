@@ -2,7 +2,7 @@
 import axios from 'axios';
 import { useAuthDataContext } from '../AuthContext';
 
-const TaskRow = ({ task, onInProgClick, onCompletedClick }) => {
+const TaskRow = ({ task, onDoingClick, onDoneClick }) => {
 
     const { user } = useAuthDataContext();
     const [userDoing, setUserDoing] = useState({firstName: '', lastName: ''});
@@ -15,24 +15,23 @@ const TaskRow = ({ task, onInProgClick, onCompletedClick }) => {
 
         getUserById();
 
-    }, []);
+    });
 
     return (
         <tr>
             <td>{task.title}</td>
             <td>
                 {task.status === 0 &&
-                    <button onClick={onInProgClick}
+                    <button onClick={onDoingClick}
                         className="btn btn-outline-success">I got this!
                             </button>}
                 {task.status === 1 && task.userId === user.id &&
-                    <button onClick={onCompletedClick}
+                    <button onClick={onDoneClick}
                         className="btn btn-outline-primary">I'm done!
                             </button>}
-                {task.status === 1 && task.userId !== user.id &&
-                    <button onClick={onCompletedClick}
-                        disabled
-                    className="btn btn-outline-danger"> {userDoing.firstName} {userDoing.lastName} is doing
+                {task.status === 1 && task.userId !== user.id && 
+                    <button className="btn btn-outline-danger"
+                        disabled> {userDoing.firstName} {userDoing.lastName} is doing
                             </button>}
             </td>
         </tr >

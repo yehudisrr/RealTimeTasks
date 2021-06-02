@@ -15,12 +15,10 @@ namespace RealTimeTasks.Web.Controllers
     public class TaskItemController : ControllerBase
     {
         private readonly string _connectionString;
-        private readonly IHubContext<TaskHub> _context;
 
-        public TaskItemController(IConfiguration configuration, IHubContext<TaskHub> context)
+        public TaskItemController(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("ConStr");
-            _context = context;
         }
 
     
@@ -40,19 +38,14 @@ namespace RealTimeTasks.Web.Controllers
             var repo = new TaskItemsRepository(_connectionString);
             var userId = GetCurrentUser().Id;
             repo.Add(title, userId);
-            _context.Clients.All.SendAsync("taskadded", GetAllIncomplete());
         }
 
         [HttpPost]
         [Route("updatestatus")]
         public void UpdateStatus(UpdateStatusViewModel viewModel)
         {
-            var user = GetCurrentUser();
-            viewModel.UserId = user.Id;
             var repo = new TaskItemsRepository(_connectionString);
             repo.UpdateStatus(viewModel.TaskId, viewModel.Status, viewModel.UserId);
-            _context.Clients.All.SendAsync("taskupdated", GetAllIncomplete());
-
        }
 
         private User GetCurrentUser()
